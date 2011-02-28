@@ -4,7 +4,7 @@ from time import time
 from random import getrandbits
 from time import time
 import urllib.request, urllib.parse, urllib.error
-import hashlib
+import hashlib, base64
 import hmac
 
 
@@ -59,8 +59,9 @@ class OAuth(Auth):
         message = '&'.join(
             urllib.parse.quote(i, '') for i in [method.upper(), base_url, enc_params])
 
-        signature = hmac.new(
-            key, message, hashlib.sha1).digest().encode('base64')[:-1]
+        signature = base64.encodebytes(
+            hmac.new(
+                bytes(key, encoding='utf8'), bytes(message, encoding='utf8'), hashlib.sha1).digest())
         return enc_params + "&" + "oauth_signature=" + urllib.parse.quote(signature, '')
 
     def generate_headers(self):
