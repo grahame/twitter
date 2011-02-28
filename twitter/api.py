@@ -7,10 +7,7 @@ def _py26OrGreater():
     import sys
     return sys.hexversion > 0x20600f0
 
-if _py26OrGreater():
-    import json
-else:
-    import simplejson as json
+import json
 
 class TwitterError(Exception):
     """
@@ -149,7 +146,7 @@ class TwitterCall(object):
         try:
             handle = urllib.request.urlopen(req)
             if "json" == self.format:
-                res = json.loads(handle.read())
+                res = json.loads(str(handle.read(), 'utf8'))
                 return wrap_response(res, handle.headers)
             else:
                 return wrap_response(str(handle.read()), handle.headers)
